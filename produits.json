@@ -10,20 +10,20 @@
       "nom": "Menus & Formules",
       "icone": "🦖",
       "produits": [
-        { "nom": "Rexpress", "description": "Churros salé + Café", "prix": 50, "image": "images/rexpressmenu.png" },
-        { "nom": "Bronto (végé)", "description": "Rings + Ice Tea", "prix": 65, "image": "images/brontomenu.png" },
-        { "nom": "Breakfast", "description": "Petit-déjeuner + Café + Pancakes", "prix": 70, "image": "images/breakfastmenu.png" },
-        { "nom": "Raptor", "description": "Steak frites + Pumpkin Spice Latte + Soda Cola", "prix": 90, "image": "images/raptormenu.png" },
-        { "nom": "Rex", "description": "Burger + Pilons de poulet + Milkshake pomme caramel + Ice Tea", "prix": 130, "image": "images/rexmenu.png" }
+        { "nom": "Rexpress", "description": "Churros salé + Café", "prix": 50, "image": "images/Rexpressmenu.png" },
+        { "nom": "Bronto (végé)", "description": "Rings + Ice Tea", "prix": 65, "image": "images/Brontomenu.png" },
+        { "nom": "Breakfast", "description": "Petit-déjeuner + Café + Pancakes", "prix": 70, "image": "images/Breakfastmenu.png" },
+        { "nom": "Raptor", "description": "Steak frites + Pumpkin Spice Latte + Soda Cola", "prix": 90, "image": "images/Raptormenu.png" },
+        { "nom": "Rex", "description": "Burger + Pilons de poulet + Milkshake pomme caramel + Ice Tea", "prix": 130, "image": "imagesRrexmenu.png" }
       ]
     },
     {
       "nom": "Plats",
       "icone": "🍖",
       "produits": [
-        { "nom": "Breakfast", "description": "Petit-déjeuner complet", "prix": 30, "image": "images/breakfast.png" },
+        { "nom": "Breakfast", "description": "Petit-déjeuner complet", "prix": 30, "image": "images/Breakfast.png" },
         { "nom": "Pilons de poulet", "description": "6 pièces marinées", "prix": 30, "image": "images/pilonsdepoulet.png" },
-        { "nom": "Bucket de poisson", "description": "Poisson frit croustillant", "prix": 25, "image": "images/bucketdepoisson.png" },
+        { "nom": "Bucket de poisson", "description": "Poisson frit croustillant", "prix": 25, "image": "images/Bucketdepoisson.png" },
         { "nom": "Rings", "description": "Anneaux frits", "prix": 35, "image": "images/rings.png" },
         { "nom": "Churros salé", "description": "Churros version salée", "prix": 35, "image": "images/churrossale.png" },
         { "nom": "Rex Burger", "description": "Le burger signature", "prix": 45, "image": "images/rexburger.png" },
@@ -36,7 +36,7 @@
       "produits": [
         { "nom": "Donut glacé", "description": "Glaçage vanille ou chocolat", "prix": 20, "image": "images/donutglace.png" },
         { "nom": "Pancakes", "description": "Stack de 3 pancakes", "prix": 20, "image": "images/pancakes.png" },
-        { "nom": "Cheesecake myrtilles", "description": "Coulis de myrtilles maison", "prix": 25, "image": "images/cheesecakemyrtilles.png" },
+        { "nom": "Cheesecake myrtilles", "description": "Coulis de myrtilles maison", "prix": 25, "image": "images/Cheesecakemyrtilles.png" },
         { "nom": "Cinnamon Rolls", "description": "Roulés à la cannelle", "prix": 30, "image": "images/cinnamonrolls.png" }
       ]
     },
