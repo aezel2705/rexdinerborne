@@ -14,7 +14,7 @@
         { "nom": "Bronto (végé)", "description": "Rings + Ice Tea", "prix": 65, "image": "images/brontomenu.png" },
         { "nom": "Breakfast", "description": "Petit-déjeuner + Café + Pancakes", "prix": 70, "image": "images/breakfastmenu.png" },
         { "nom": "Raptor", "description": "Steak frites + Pumpkin Spice Latte + Soda Cola", "prix": 90, "image": "images/raptormenu.png" },
-        { "nom": "Rex", "description": "Burger + Pilons de poulet + Milkshake pomme caramel + Ice Tea", "prix": 130, "image": "images/Rexmenu.png" }
+        { "nom": "Rex", "description": "Burger + Pilons de poulet + Milkshake pomme caramel + Ice Tea", "prix": 130, "image": "images/rexmenu.png" }
       ]
     },
     {
