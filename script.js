@@ -244,7 +244,7 @@ document.getElementById('commande-form').addEventListener('submit', function(e) 
     document.getElementById('confirmation-overlay').classList.add('open');
     document.getElementById('confirmation-modal').classList.add('open');
     
-    var message = '<@&ID_DU_ROLE>\n🦖 **Nouvelle commande Rex Diner !**\n\n';
+    var message = '<@&1221768622825799750>\n🦖 **Nouvelle commande Rex Diner !**\n\n';
     message += '👤 **Client :** ' + nom + '\n';
     if (tel) message += '📞 **Tél :** ' + tel + '\n';
     message += '📋 **Commande :** ' + numero + '\n';
