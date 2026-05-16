@@ -236,7 +236,6 @@ document.getElementById('commande-form').addEventListener('submit', function(e) 
     
     var nom = document.getElementById('client-nom').value.trim();
     var tel = document.getElementById('client-tel').value.trim();
-    var type = document.getElementById('client-type').value;
     var numero = '#' + Math.floor(Math.random() * 9000 + 1000);
     
     if (!nom) return;
@@ -245,10 +244,9 @@ document.getElementById('commande-form').addEventListener('submit', function(e) 
     document.getElementById('confirmation-overlay').classList.add('open');
     document.getElementById('confirmation-modal').classList.add('open');
     
-    var message = '🦖 **Nouvelle commande Rex Diner !**\n\n';
+    var message = '<@&ID_DU_ROLE>\n🦖 **Nouvelle commande Rex Diner !**\n\n';
     message += '👤 **Client :** ' + nom + '\n';
     if (tel) message += '📞 **Tél :** ' + tel + '\n';
-    message += '🏷️ **Type :** ' + type + '\n';
     message += '📋 **Commande :** ' + numero + '\n';
     message += '─────────────────────\n';
     
@@ -265,7 +263,7 @@ document.getElementById('commande-form').addEventListener('submit', function(e) 
     fetch(DISCORD_WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: message })
+        body: JSON.stringify({ content: message, allowed_mentions: { parse: ['roles'] } })
     });
     
     viderPanier();
