@@ -17,20 +17,63 @@
         <div class="dino-icon">🦕</div>
     </header>
 
+    <!-- Barre du panier -->
+    <div class="panier-bar" id="panier-bar">
+        <button class="panier-toggle" id="panier-toggle">
+            🛒 Panier <span class="panier-compteur" id="panier-compteur">0</span>
+        </button>
+    </div>
+
+    <!-- Panier latéral -->
+    <div class="panier-overlay" id="panier-overlay"></div>
+    <aside class="panier-sidebar" id="panier-sidebar">
+        <div class="panier-header">
+            <h2>🦖 Votre commande</h2>
+            <button class="panier-fermer" id="panier-fermer">✕</button>
+        </div>
+        <div class="panier-liste" id="panier-liste">
+            <p class="panier-vide">Votre panier est vide</p>
+        </div>
+        <div class="panier-total" id="panier-total"></div>
+        
+        <!-- Formulaire commande -->
+        <form class="commande-form" id="commande-form">
+            <h3>Finaliser la commande</h3>
+            <input type="text" id="client-nom" placeholder="Votre prénom" required>
+            <input type="tel" id="client-tel" placeholder="Téléphone (optionnel)">
+            <select id="client-type">
+                <option value="Sur place">🏠 Sur place</option>
+                <option value="À emporter">🛍️ À emporter</option>
+            </select>
+            <button type="submit" class="btn-commander" id="btn-commander" disabled>
+                🦕 Commander
+            </button>
+        </form>
+    </aside>
+
+    <!-- Message de confirmation -->
+    <div class="confirmation-overlay" id="confirmation-overlay"></div>
+    <div class="confirmation-modal" id="confirmation-modal">
+        <div class="confirmation-content">
+            <div class="dino-icon">🦖</div>
+            <h2>Commande confirmée !</h2>
+            <p class="confirmation-numero">Votre numéro : <span id="confirmation-numero"></span></p>
+            <p>Donnez ce numéro au comptoir pour récupérer votre commande.</p>
+            <p class="confirmation-merci">À tout de suite chez Rex Diner !</p>
+            <button class="btn-fermer" id="confirmation-fermer">OK</button>
+        </div>
+    </div>
+
     <!-- Navigation catégories -->
-    <nav class="categories-nav" id="categories-nav">
-        <!-- Généré par JS -->
-    </nav>
+    <nav class="categories-nav" id="categories-nav"></nav>
 
     <!-- Zone d'affichage des produits -->
-    <main class="produits-container" id="produits-container">
-        <!-- Généré par JS -->
-    </main>
+    <main class="produits-container" id="produits-container"></main>
 
     <!-- Pied de page -->
     <footer class="diner-footer">
         <div class="checkerboard"></div>
-        <p>🍔 REX DINER - Open 24/7 - Depuis 1955 🍔</p>
+        <p>🍔 REX DINER - Open 24/7 - Depuis 1954 🍔</p>
         <p class="footer-dinos">🦖 🦕 🦖 🦕 🦖</p>
     </footer>
 
