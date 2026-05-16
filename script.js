@@ -5,7 +5,7 @@ const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/150519257649460039
 let panier = [];
 let produitsMap = {};
 
-// === DONNÉES (intégrées directement, pas de fetch) ===
+// === DONNÉES ===
 const DATA = {
   restaurant: {
     nom: "REX DINER",
@@ -63,86 +63,82 @@ const DATA = {
 };
 
 // === DÉMARRAGE ===
-try {
+(function() {
     document.getElementById('restaurant-nom').textContent = DATA.restaurant.nom;
     document.getElementById('restaurant-slogan').textContent = DATA.restaurant.slogan;
     document.getElementById('promo-texte').textContent = DATA.restaurant.promo;
     
     // Construire la map des produits
-    DATA.categories.forEach(cat => {
-        cat.produits.forEach(produit => {
+    DATA.categories.forEach(function(cat) {
+        cat.produits.forEach(function(produit) {
             produitsMap[produit.id] = produit;
         });
     });
     
     // Créer la navigation
-    const nav = document.getElementById('categories-nav');
+    var nav = document.getElementById('categories-nav');
     nav.innerHTML = '<button class="cat-btn active" data-categorie="toutes">🍽️ Tout</button>';
-    DATA.categories.forEach((cat, index) => {
-        nav.innerHTML += `<button class="cat-btn" data-categorie="${index}">${cat.icone} ${cat.nom}</button>`;
+    DATA.categories.forEach(function(cat, index) {
+        nav.innerHTML += '<button class="cat-btn" data-categorie="' + index + '">' + cat.icone + ' ' + cat.nom + '</button>';
     });
     
     // Créer les produits
-    const container = document.getElementById('produits-container');
+    var container = document.getElementById('produits-container');
     container.innerHTML = '';
     
-    DATA.categories.forEach(cat => {
-        let html = `<section class="categorie-section"><h2 class="categorie-titre">${cat.icone} ${cat.nom}</h2><div class="produits-grid">`;
+    DATA.categories.forEach(function(cat) {
+        var html = '<section class="categorie-section"><h2 class="categorie-titre">' + cat.icone + ' ' + cat.nom + '</h2><div class="produits-grid">';
         
-        cat.produits.forEach(produit => {
-            const imageHtml = produit.image 
-                ? `<div class="produit-image-container"><img src="${produit.image}" alt="${produit.nom}" class="produit-image"></div>`
+        cat.produits.forEach(function(produit) {
+            var imageHtml = produit.image 
+                ? '<div class="produit-image-container"><img src="' + produit.image + '" alt="' + produit.nom + '" class="produit-image"></div>'
                 : '';
             
-            html += `
-                <div class="produit-card">
-                    <div class="produit-content">
-                        <h3 class="produit-nom">${produit.nom}</h3>
-                        <p class="produit-description">${produit.description}</p>
-                        <p class="produit-prix">$${produit.prix.toFixed(2)}</p>
-                        <button class="btn-ajouter" data-id="${produit.id}">➕ Ajouter</button>
-                    </div>
-                    ${imageHtml}
-                </div>
-            `;
+            html += '<div class="produit-card">' +
+                '<div class="produit-content">' +
+                '<h3 class="produit-nom">' + produit.nom + '</h3>' +
+                '<p class="produit-description">' + produit.description + '</p>' +
+                '<p class="produit-prix">$' + produit.prix.toFixed(2) + '</p>' +
+                '<button class="btn-ajouter" data-id="' + produit.id + '">➕ Ajouter</button>' +
+                '</div>' +
+                imageHtml +
+                '</div>';
         });
         
         html += '</div></section>';
         container.innerHTML += html;
-      // Attacher les événements
-document.querySelectorAll('.btn-ajouter').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-        ajouterAuPanier(this.getAttribute('data-id'));
     });
-});
+    
+    // Attacher les événements aux boutons
+    document.querySelectorAll('.btn-ajouter').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            ajouterAuPanier(this.getAttribute('data-id'));
+        });
     });
     
     // Navigation
     document.getElementById('categories-nav').addEventListener('click', function(e) {
         if (!e.target.classList.contains('cat-btn')) return;
         
-        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.cat-btn').forEach(function(b) { b.classList.remove('active'); });
         e.target.classList.add('active');
         
-        const catIndex = e.target.dataset.categorie;
-        const sections = document.querySelectorAll('.categorie-section');
+        var catIndex = e.target.dataset.categorie;
+        var sections = document.querySelectorAll('.categorie-section');
         
         if (catIndex === 'toutes') {
-            sections.forEach(s => s.style.display = 'block');
+            sections.forEach(function(s) { s.style.display = 'block'; });
         } else {
-            sections.forEach((s, i) => {
+            sections.forEach(function(s, i) {
                 s.style.display = (i === parseInt(catIndex)) ? 'block' : 'none';
             });
         }
     });
-    
-} catch(e) {
-    console.error('Erreur:', e);
-}
+})();
 
 // === PANIER ===
 function ajouterAuPanier(produitId) {
-    const existant = panier.find(item => item.id === produitId);
+    var existant = panier.find(function(item) { return item.id === produitId; });
     if (existant) {
         existant.quantite++;
     } else {
@@ -152,7 +148,7 @@ function ajouterAuPanier(produitId) {
 }
 
 function retirerDuPanier(produitId) {
-    const index = panier.findIndex(item => item.id === produitId);
+    var index = panier.findIndex(function(item) { return item.id === produitId; });
     if (index !== -1) {
         if (panier[index].quantite > 1) {
             panier[index].quantite--;
@@ -171,22 +167,22 @@ function viderPanier() {
 }
 
 function calculerTotal() {
-    let total = 0;
-    panier.forEach(item => {
-        const produit = produitsMap[item.id];
+    var total = 0;
+    panier.forEach(function(item) {
+        var produit = produitsMap[item.id];
         if (produit) total += produit.prix * item.quantite;
     });
     return total;
 }
 
 function mettreAJourPanier() {
-    const compteur = document.getElementById('panier-compteur');
-    const liste = document.getElementById('panier-liste');
-    const totalEl = document.getElementById('panier-total');
-    const btnCommander = document.getElementById('btn-commander');
+    var compteur = document.getElementById('panier-compteur');
+    var liste = document.getElementById('panier-liste');
+    var totalEl = document.getElementById('panier-total');
+    var btnCommander = document.getElementById('btn-commander');
     
-    let nbArticles = 0;
-    panier.forEach(item => { nbArticles += item.quantite; });
+    var nbArticles = 0;
+    panier.forEach(function(item) { nbArticles += item.quantite; });
     compteur.textContent = nbArticles;
     
     if (panier.length === 0) {
@@ -194,33 +190,26 @@ function mettreAJourPanier() {
         totalEl.innerHTML = '';
         btnCommander.disabled = true;
     } else {
-        let html = '';
-        panier.forEach(item => {
-            const produit = produitsMap[item.id];
+        var html = '';
+        panier.forEach(function(item) {
+            var produit = produitsMap[item.id];
             if (produit) {
-                html += `
-                    <div class="panier-item">
-                        <div class="panier-item-info">
-                            <span class="panier-item-nom">${produit.nom}</span>
-                            <span class="panier-item-prix">$${(produit.prix * item.quantite).toFixed(2)}</span>
-                        </div>
-                        <div class="panier-item-actions">
-                            <button class="btn-qte" onclick="retirerDuPanier('${item.id}')">−</button>
-                            <span class="panier-item-qte">${item.quantite}</span>
-                            <button class="btn-qte" onclick="ajouterAuPanier('${item.id}')">+</button>
-                        </div>
-                    </div>
-                `;
+                html += '<div class="panier-item">' +
+                    '<div class="panier-item-info">' +
+                    '<span class="panier-item-nom">' + produit.nom + '</span>' +
+                    '<span class="panier-item-prix">$' + (produit.prix * item.quantite).toFixed(2) + '</span>' +
+                    '</div>' +
+                    '<div class="panier-item-actions">' +
+                    '<button class="btn-qte" onclick="retirerDuPanier(\'' + item.id + '\')">−</button>' +
+                    '<span class="panier-item-qte">' + item.quantite + '</span>' +
+                    '<button class="btn-qte" onclick="ajouterAuPanier(\'' + item.id + '\')">+</button>' +
+                    '</div>' +
+                    '</div>';
             }
         });
         liste.innerHTML = html;
         
-        totalEl.innerHTML = `
-            <div class="panier-total-ligne">
-                <span>Total</span>
-                <span class="panier-total-prix">$${calculerTotal().toFixed(2)}</span>
-            </div>
-        `;
+        totalEl.innerHTML = '<div class="panier-total-ligne"><span>Total</span><span class="panier-total-prix">$' + calculerTotal().toFixed(2) + '</span></div>';
         btnCommander.disabled = false;
     }
 }
@@ -245,19 +234,17 @@ document.getElementById('panier-overlay').addEventListener('click', function() {
 document.getElementById('commande-form').addEventListener('submit', function(e) {
     e.preventDefault();
     
-    const nom = document.getElementById('client-nom').value.trim();
-    const tel = document.getElementById('client-tel').value.trim();
-    const type = document.getElementById('client-type').value;
-    const numero = '#' + Math.floor(Math.random() * 9000 + 1000);
+    var nom = document.getElementById('client-nom').value.trim();
+    var tel = document.getElementById('client-tel').value.trim();
+    var type = document.getElementById('client-type').value;
+    var numero = '#' + Math.floor(Math.random() * 9000 + 1000);
     
     if (!nom) return;
     
-    // Afficher la confirmation
     document.getElementById('confirmation-numero').textContent = numero;
     document.getElementById('confirmation-overlay').classList.add('open');
     document.getElementById('confirmation-modal').classList.add('open');
     
-    // Envoyer vers Discord
     var message = '🦖 **Nouvelle commande Rex Diner !**\n\n';
     message += '👤 **Client :** ' + nom + '\n';
     if (tel) message += '📞 **Tél :** ' + tel + '\n';
@@ -275,19 +262,17 @@ document.getElementById('commande-form').addEventListener('submit', function(e) 
     message += '─────────────────────\n';
     message += '💰 **Total : $' + calculerTotal().toFixed(2) + '**';
     
-    // Envoi du webhook
     fetch(DISCORD_WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: message })
-    })
-    .then(function() { console.log('✅ Commande envoyée'); })
-    .catch(function(err) { console.error('❌ Erreur:', err); });
+    });
     
     viderPanier();
     document.getElementById('commande-form').reset();
 });
 
+// === CONFIRMATION ===
 document.getElementById('confirmation-fermer').addEventListener('click', function() {
     document.getElementById('confirmation-overlay').classList.remove('open');
     document.getElementById('confirmation-modal').classList.remove('open');
