@@ -100,7 +100,7 @@ try {
                         <h3 class="produit-nom">${produit.nom}</h3>
                         <p class="produit-description">${produit.description}</p>
                         <p class="produit-prix">$${produit.prix.toFixed(2)}</p>
-                        <button class="btn-ajouter" onclick="ajouterAuPanier('${produit.id}')">➕ Ajouter</button>
+                        <button class="btn-ajouter" data-id="${produit.id}">➕ Ajouter</button>
                     </div>
                     ${imageHtml}
                 </div>
@@ -109,6 +109,12 @@ try {
         
         html += '</div></section>';
         container.innerHTML += html;
+      // Attacher les événements
+document.querySelectorAll('.btn-ajouter').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        ajouterAuPanier(this.getAttribute('data-id'));
+    });
+});
     });
     
     // Navigation
