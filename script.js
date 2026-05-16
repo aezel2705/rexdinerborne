@@ -252,9 +252,37 @@ document.getElementById('commande-form').addEventListener('submit', function(e) 
     
     if (!nom) return;
     
+    // Afficher la confirmation
     document.getElementById('confirmation-numero').textContent = numero;
     document.getElementById('confirmation-overlay').classList.add('open');
     document.getElementById('confirmation-modal').classList.add('open');
+    
+    // Envoyer vers Discord
+    var message = '🦖 **Nouvelle commande Rex Diner !**\n\n';
+    message += '👤 **Client :** ' + nom + '\n';
+    if (tel) message += '📞 **Tél :** ' + tel + '\n';
+    message += '🏷️ **Type :** ' + type + '\n';
+    message += '📋 **Commande :** ' + numero + '\n';
+    message += '─────────────────────\n';
+    
+    panier.forEach(function(item) {
+        var produit = produitsMap[item.id];
+        if (produit) {
+            message += item.quantite + 'x ' + produit.nom + ' — $' + (produit.prix * item.quantite).toFixed(2) + '\n';
+        }
+    });
+    
+    message += '─────────────────────\n';
+    message += '💰 **Total : $' + calculerTotal().toFixed(2) + '**';
+    
+    // Envoi du webhook
+    fetch(DISCORD_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: message })
+    })
+    .then(function() { console.log('✅ Commande envoyée'); })
+    .catch(function(err) { console.error('❌ Erreur:', err); });
     
     viderPanier();
     document.getElementById('commande-form').reset();
