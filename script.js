@@ -5,128 +5,136 @@ const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/150519257649460039
 let panier = [];
 let produitsMap = {};
 
-// === CHARGEMENT DES DONNÉES ===
-fetch('./produits.json')
-    .then(response => {
-        if (!response.ok) throw new Error('Fichier introuvable');
-        return response.json();
-    })
-    .then(data => {
-        afficherRestaurant(data.restaurant);
-        construireProduitsMap(data.categories);
-        afficherCategories(data.categories);
-        afficherTousLesProduits(data.categories);
-        setupNavigation();
-    })
-    .catch(error => {
-        console.error('Erreur:', error);
-        document.getElementById('produits-container').innerHTML = 
-            '<p style="text-align:center; color:#d74c7b; padding:50px;">⚠️ Impossible de charger le menu.<br>Vérifiez que produits.json est dans le même dossier.</p>';
-    });
+// === DONNÉES (intégrées directement, pas de fetch) ===
+const DATA = {
+  restaurant: {
+    nom: "REX DINER",
+    slogan: "Open 24/7 - Since 1954",
+    promo: "⭐ 5 menus achetés = 1 offert ! ⭐"
+  },
+  categories: [
+    {
+      nom: "Menus & Formules",
+      icone: "🦖",
+      produits: [
+        { id: "menu-1", nom: "Rexpress", description: "Churros salé + Café", prix: 50, image: "images/rexpressmenu.png" },
+        { id: "menu-2", nom: "Bronto (végé)", description: "Rings + Ice Tea", prix: 65, image: "images/brontomenu.png" },
+        { id: "menu-3", nom: "Breakfast", description: "Petit-déjeuner + Café + Pancakes", prix: 70, image: "images/breakfastmenu.png" },
+        { id: "menu-4", nom: "Raptor", description: "Steak frites + Pumpkin Spice Latte + Soda Cola", prix: 90, image: "images/raptormenu.png" },
+        { id: "menu-5", nom: "Rex", description: "Burger + Pilons de poulet + Milkshake pomme caramel + Ice Tea", prix: 130, image: "images/rexmenu.png" }
+      ]
+    },
+    {
+      nom: "Plats",
+      icone: "🍖",
+      produits: [
+        { id: "plat-1", nom: "Breakfast", description: "Petit-déjeuner complet", prix: 30, image: "images/breakfast.png" },
+        { id: "plat-2", nom: "Pilons de poulet", description: "6 pièces marinées", prix: 30, image: "images/pilonsdepoulet.png" },
+        { id: "plat-3", nom: "Bucket de poisson", description: "Poisson frit croustillant", prix: 25, image: "images/bucketdepoisson.png" },
+        { id: "plat-4", nom: "Rings", description: "Anneaux frits", prix: 35, image: "images/rings.png" },
+        { id: "plat-5", nom: "Churros salé", description: "Churros version salée", prix: 35, image: "images/churrossale.png" },
+        { id: "plat-6", nom: "Rex Burger", description: "Le burger signature", prix: 45, image: "images/rexburger.png" },
+        { id: "plat-7", nom: "Steak frites", description: "Steak haché + frites maison", prix: 45, image: "images/steakfrites.png" }
+      ]
+    },
+    {
+      nom: "Desserts",
+      icone: "🍩",
+      produits: [
+        { id: "dessert-1", nom: "Donut glacé", description: "Glaçage vanille ou chocolat", prix: 20, image: "images/donutglace.png" },
+        { id: "dessert-2", nom: "Pancakes", description: "Stack de 3 pancakes", prix: 20, image: "images/pancakes.png" },
+        { id: "dessert-3", nom: "Cheesecake myrtilles", description: "Coulis de myrtilles maison", prix: 25, image: "images/cheesecakemyrtilles.png" },
+        { id: "dessert-4", nom: "Cinnamon Rolls", description: "Roulés à la cannelle", prix: 30, image: "images/cinnamonrolls.png" }
+      ]
+    },
+    {
+      nom: "Boissons",
+      icone: "🥤",
+      produits: [
+        { id: "boisson-1", nom: "Soda Cola", description: "33cl", prix: 15, image: "images/sodacola.png" },
+        { id: "boisson-2", nom: "Café", description: "Café filtre américain", prix: 15, image: "images/cafe.png" },
+        { id: "boisson-3", nom: "Milkshake mangue", description: "Fruits frais mixés", prix: 25, image: "images/milkshakemangue.png" },
+        { id: "boisson-4", nom: "Milkshake pomme caramel", description: "Pomme fraîche + caramel beurre salé", prix: 25, image: "images/milkshakepommecaramel.png" },
+        { id: "boisson-5", nom: "Ice Tea", description: "Pêche ou citron", prix: 30, image: "images/icetea.png" },
+        { id: "boisson-6", nom: "Pumpkin Spice Latte", description: "Latte épicé à la citrouille", prix: 30, image: "images/pumpkinspicelatte.png" }
+      ]
+    }
+  ]
+};
 
-// === FONCTIONS D'AFFICHAGE ===
-function afficherRestaurant(restaurant) {
-    document.getElementById('restaurant-nom').textContent = restaurant.nom;
-    document.getElementById('restaurant-slogan').textContent = restaurant.slogan;
-    document.getElementById('promo-texte').textContent = restaurant.promo;
-}
-
-function construireProduitsMap(categories) {
-    produitsMap = {};
-    categories.forEach(cat => {
+// === DÉMARRAGE ===
+try {
+    document.getElementById('restaurant-nom').textContent = DATA.restaurant.nom;
+    document.getElementById('restaurant-slogan').textContent = DATA.restaurant.slogan;
+    document.getElementById('promo-texte').textContent = DATA.restaurant.promo;
+    
+    // Construire la map des produits
+    DATA.categories.forEach(cat => {
         cat.produits.forEach(produit => {
             produitsMap[produit.id] = produit;
         });
     });
-}
-
-function afficherCategories(categories) {
+    
+    // Créer la navigation
     const nav = document.getElementById('categories-nav');
-    nav.innerHTML = '';
-    
-    const btnTout = document.createElement('button');
-    btnTout.className = 'cat-btn active';
-    btnTout.textContent = '🍽️ Tout';
-    btnTout.dataset.categorie = 'toutes';
-    nav.appendChild(btnTout);
-    
-    categories.forEach((cat, index) => {
-        const btn = document.createElement('button');
-        btn.className = 'cat-btn';
-        btn.textContent = `${cat.icone} ${cat.nom}`;
-        btn.dataset.categorie = index;
-        nav.appendChild(btn);
+    nav.innerHTML = '<button class="cat-btn active" data-categorie="toutes">🍽️ Tout</button>';
+    DATA.categories.forEach((cat, index) => {
+        nav.innerHTML += `<button class="cat-btn" data-categorie="${index}">${cat.icone} ${cat.nom}</button>`;
     });
-}
-
-function afficherTousLesProduits(categories) {
+    
+    // Créer les produits
     const container = document.getElementById('produits-container');
     container.innerHTML = '';
     
-    categories.forEach(cat => {
-        const section = creerSectionCategorie(cat);
-        container.appendChild(section);
-    });
-    
-    // ⚡ Attacher les événements APRÈS avoir créé tous les produits
-    attacherEvenementsBoutons();
-}
-
-function creerSectionCategorie(categorie) {
-    const section = document.createElement('section');
-    section.className = 'categorie-section';
-    section.dataset.categorie = categorie.nom;
-    
-    const titre = document.createElement('h2');
-    titre.className = 'categorie-titre';
-    titre.textContent = `${categorie.icone} ${categorie.nom}`;
-    section.appendChild(titre);
-    
-    const grid = document.createElement('div');
-    grid.className = 'produits-grid';
-    
-    categorie.produits.forEach(produit => {
-        const card = creerCarteProduit(produit);
-        grid.appendChild(card);
-    });
-    
-    section.appendChild(grid);
-    return section;
-}
-
-function creerCarteProduit(produit) {
-    const card = document.createElement('div');
-    card.className = 'produit-card';
-    
-    const imageHtml = produit.image 
-        ? `<div class="produit-image-container">
-              <img src="${produit.image}" alt="${produit.nom}" class="produit-image">
-           </div>`
-        : '';
-    
-    card.innerHTML = `
-        <div class="produit-content">
-            <h3 class="produit-nom">${produit.nom}</h3>
-            <p class="produit-description">${produit.description}</p>
-            <p class="produit-prix">$${produit.prix.toFixed(2)}</p>
-            <button class="btn-ajouter" data-id="${produit.id}">➕ Ajouter</button>
-        </div>
-        ${imageHtml}
-    `;
-    
-    return card;
-}
-
-function attacherEvenementsBoutons() {
-    document.querySelectorAll('.btn-ajouter').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const produitId = this.getAttribute('data-id');
-            ajouterAuPanier(produitId);
+    DATA.categories.forEach(cat => {
+        let html = `<section class="categorie-section"><h2 class="categorie-titre">${cat.icone} ${cat.nom}</h2><div class="produits-grid">`;
+        
+        cat.produits.forEach(produit => {
+            const imageHtml = produit.image 
+                ? `<div class="produit-image-container"><img src="${produit.image}" alt="${produit.nom}" class="produit-image"></div>`
+                : '';
+            
+            html += `
+                <div class="produit-card">
+                    <div class="produit-content">
+                        <h3 class="produit-nom">${produit.nom}</h3>
+                        <p class="produit-description">${produit.description}</p>
+                        <p class="produit-prix">$${produit.prix.toFixed(2)}</p>
+                        <button class="btn-ajouter" onclick="ajouterAuPanier('${produit.id}')">➕ Ajouter</button>
+                    </div>
+                    ${imageHtml}
+                </div>
+            `;
         });
+        
+        html += '</div></section>';
+        container.innerHTML += html;
     });
+    
+    // Navigation
+    document.getElementById('categories-nav').addEventListener('click', function(e) {
+        if (!e.target.classList.contains('cat-btn')) return;
+        
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        
+        const catIndex = e.target.dataset.categorie;
+        const sections = document.querySelectorAll('.categorie-section');
+        
+        if (catIndex === 'toutes') {
+            sections.forEach(s => s.style.display = 'block');
+        } else {
+            sections.forEach((s, i) => {
+                s.style.display = (i === parseInt(catIndex)) ? 'block' : 'none';
+            });
+        }
+    });
+    
+} catch(e) {
+    console.error('Erreur:', e);
 }
 
-// === GESTION DU PANIER ===
+// === PANIER ===
 function ajouterAuPanier(produitId) {
     const existant = panier.find(item => item.id === produitId);
     if (existant) {
@@ -135,7 +143,6 @@ function ajouterAuPanier(produitId) {
         panier.push({ id: produitId, quantite: 1 });
     }
     mettreAJourPanier();
-    animerAjoutPanier();
 }
 
 function retirerDuPanier(produitId) {
@@ -153,14 +160,17 @@ function retirerDuPanier(produitId) {
 function viderPanier() {
     panier = [];
     mettreAJourPanier();
-    fermerPanier();
+    document.getElementById('panier-sidebar').classList.remove('open');
+    document.getElementById('panier-overlay').classList.remove('open');
 }
 
 function calculerTotal() {
-    return panier.reduce((total, item) => {
+    let total = 0;
+    panier.forEach(item => {
         const produit = produitsMap[item.id];
-        return total + (produit ? produit.prix * item.quantite : 0);
-    }, 0);
+        if (produit) total += produit.prix * item.quantite;
+    });
+    return total;
 }
 
 function mettreAJourPanier() {
@@ -169,7 +179,8 @@ function mettreAJourPanier() {
     const totalEl = document.getElementById('panier-total');
     const btnCommander = document.getElementById('btn-commander');
     
-    const nbArticles = panier.reduce((sum, item) => sum + item.quantite, 0);
+    let nbArticles = 0;
+    panier.forEach(item => { nbArticles += item.quantite; });
     compteur.textContent = nbArticles;
     
     if (panier.length === 0) {
@@ -177,147 +188,73 @@ function mettreAJourPanier() {
         totalEl.innerHTML = '';
         btnCommander.disabled = true;
     } else {
-        liste.innerHTML = panier.map(item => {
+        let html = '';
+        panier.forEach(item => {
             const produit = produitsMap[item.id];
-            if (!produit) return '';
-            return `
-                <div class="panier-item">
-                    <div class="panier-item-info">
-                        <span class="panier-item-nom">${produit.nom}</span>
-                        <span class="panier-item-prix">$${(produit.prix * item.quantite).toFixed(2)}</span>
+            if (produit) {
+                html += `
+                    <div class="panier-item">
+                        <div class="panier-item-info">
+                            <span class="panier-item-nom">${produit.nom}</span>
+                            <span class="panier-item-prix">$${(produit.prix * item.quantite).toFixed(2)}</span>
+                        </div>
+                        <div class="panier-item-actions">
+                            <button class="btn-qte" onclick="retirerDuPanier('${item.id}')">−</button>
+                            <span class="panier-item-qte">${item.quantite}</span>
+                            <button class="btn-qte" onclick="ajouterAuPanier('${item.id}')">+</button>
+                        </div>
                     </div>
-                    <div class="panier-item-actions">
-                        <button class="btn-qte" onclick="retirerDuPanier('${item.id}')">−</button>
-                        <span class="panier-item-qte">${item.quantite}</span>
-                        <button class="btn-qte" onclick="ajouterAuPanier('${item.id}')">+</button>
-                    </div>
-                </div>
-            `;
-        }).join('');
+                `;
+            }
+        });
+        liste.innerHTML = html;
         
-        const total = calculerTotal();
         totalEl.innerHTML = `
             <div class="panier-total-ligne">
                 <span>Total</span>
-                <span class="panier-total-prix">$${total.toFixed(2)}</span>
+                <span class="panier-total-prix">$${calculerTotal().toFixed(2)}</span>
             </div>
         `;
         btnCommander.disabled = false;
     }
 }
 
-function animerAjoutPanier() {
-    const compteur = document.getElementById('panier-compteur');
-    compteur.classList.add('bounce');
-    setTimeout(() => compteur.classList.remove('bounce'), 300);
-}
-
-// === OUVERTURE / FERMETURE PANIER ===
-document.getElementById('panier-toggle').addEventListener('click', ouvrirPanier);
-document.getElementById('panier-fermer').addEventListener('click', fermerPanier);
-document.getElementById('panier-overlay').addEventListener('click', fermerPanier);
-
-function ouvrirPanier() {
+// === PANIER OUVERTURE/FERMETURE ===
+document.getElementById('panier-toggle').addEventListener('click', function() {
     document.getElementById('panier-sidebar').classList.add('open');
     document.getElementById('panier-overlay').classList.add('open');
-}
+});
 
-function fermerPanier() {
+document.getElementById('panier-fermer').addEventListener('click', function() {
     document.getElementById('panier-sidebar').classList.remove('open');
     document.getElementById('panier-overlay').classList.remove('open');
-}
+});
+
+document.getElementById('panier-overlay').addEventListener('click', function() {
+    document.getElementById('panier-sidebar').classList.remove('open');
+    document.getElementById('panier-overlay').classList.remove('open');
+});
 
 // === COMMANDE ===
-document.getElementById('commande-form').addEventListener('submit', async function(e) {
+document.getElementById('commande-form').addEventListener('submit', function(e) {
     e.preventDefault();
     
     const nom = document.getElementById('client-nom').value.trim();
     const tel = document.getElementById('client-tel').value.trim();
     const type = document.getElementById('client-type').value;
-    const numeroCommande = genererNumeroCommande();
+    const numero = '#' + Math.floor(Math.random() * 9000 + 1000);
     
     if (!nom) return;
     
-    afficherConfirmation(numeroCommande);
-    await envoyerVersDiscord(nom, tel, type, numeroCommande);
+    document.getElementById('confirmation-numero').textContent = numero;
+    document.getElementById('confirmation-overlay').classList.add('open');
+    document.getElementById('confirmation-modal').classList.add('open');
     
     viderPanier();
     document.getElementById('commande-form').reset();
 });
 
-function genererNumeroCommande() {
-    const maintenant = new Date();
-    const heures = String(maintenant.getHours()).padStart(2, '0');
-    const minutes = String(maintenant.getMinutes()).padStart(2, '0');
-    const aleatoire = Math.floor(Math.random() * 900) + 100;
-    return `#${heures}${minutes}-${aleatoire}`;
-}
-
-function afficherConfirmation(numero) {
-    document.getElementById('confirmation-numero').textContent = numero;
-    document.getElementById('confirmation-overlay').classList.add('open');
-    document.getElementById('confirmation-modal').classList.add('open');
-    fermerPanier();
-}
-
 document.getElementById('confirmation-fermer').addEventListener('click', function() {
     document.getElementById('confirmation-overlay').classList.remove('open');
     document.getElementById('confirmation-modal').classList.remove('open');
 });
-
-// === ENVOI VERS DISCORD ===
-async function envoyerVersDiscord(nom, tel, type, numeroCommande) {
-    const maintenant = new Date();
-    const heure = `${String(maintenant.getHours()).padStart(2, '0')}:${String(maintenant.getMinutes()).padStart(2, '0')}`;
-    
-    let message = `🦖 **Nouvelle commande Rex Diner !**\n\n`;
-    message += `👤 **Client :** ${nom}\n`;
-    if (tel) message += `📞 **Tél :** ${tel}\n`;
-    message += `🏷️ **Type :** ${type}\n`;
-    message += `📋 **Commande :** ${numeroCommande}\n`;
-    message += `🕐 **Heure :** ${heure}\n`;
-    message += `─────────────────────\n`;
-    
-    panier.forEach(item => {
-        const produit = produitsMap[item.id];
-        if (produit) {
-            message += `${item.quantite}x ${produit.nom} — $${(produit.prix * item.quantite).toFixed(2)}\n`;
-        }
-    });
-    
-    message += `─────────────────────\n`;
-    message += `💰 **Total : $${calculerTotal().toFixed(2)}**`;
-    
-    try {
-        await fetch(DISCORD_WEBHOOK_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ content: message })
-        });
-    } catch (error) {
-        console.error('Erreur webhook:', error);
-    }
-}
-
-// === NAVIGATION ===
-function setupNavigation() {
-    document.getElementById('categories-nav').addEventListener('click', function(e) {
-        if (!e.target.classList.contains('cat-btn')) return;
-        
-        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-        e.target.classList.add('active');
-        
-        const catIndex = e.target.dataset.categorie;
-        const sections = document.querySelectorAll('.categorie-section');
-        
-        if (catIndex === 'toutes') {
-            sections.forEach(s => s.style.display = 'block');
-        } else {
-            sections.forEach((s, i) => {
-                s.style.display = (i === parseInt(catIndex)) ? 'block' : 'none';
-            });
-        }
-        
-        document.getElementById('produits-container').scrollIntoView({ behavior: 'smooth' });
-    });
-}
