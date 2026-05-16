@@ -41,10 +41,7 @@
             <h3>Finaliser la commande</h3>
             <input type="text" id="client-nom" placeholder="Votre prénom" required>
             <input type="tel" id="client-tel" placeholder="Téléphone (optionnel)">
-            <select id="client-type">
-                <option value="Sur place">🏠 Sur place</option>
-                <option value="À emporter">🛍️ À emporter</option>
-            </select>
+            <input type="hidden" id="client-type" value="À emporter">
             <button type="submit" class="btn-commander" id="btn-commander" disabled>
                 🦕 Commander
             </button>
